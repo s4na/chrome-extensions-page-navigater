@@ -9,14 +9,95 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
  * ページナビゲーターの初期化
  */
 function initPageNavigator() {
-  // 前のページと次のページのリンクを検出
-  const prevLink = findPrevLink();
-  const nextLink = findNextLink();
+  // クエリパラメーターからページ番号を取得し、前後のページリンクを生成
+  const { prevLink, nextLink } = findPageLinks();
+
+  // 既存のナビゲーションボタンを削除
+  document.querySelectorAll('.page-navigator-button').forEach(btn => btn.remove());
 
   // ナビゲーションボタンをページに追加
   if (prevLink || nextLink) {
     addNavigationButtons(prevLink, nextLink);
   }
+}
+
+/**
+ * URLからクエリパラメーターを解析する
+ * @param {string} url 解析するURL
+ * @returns {Object} クエリパラメーターのオブジェクト
+ */
+function parseQueryParams(url) {
+  const params = {};
+  const urlObj = new URL(url);
+  const searchParams = new URLSearchParams(urlObj.search);
+  
+  for (const [key, value] of searchParams.entries()) {
+    params[key] = value;
+  }
+  
+  return params;
+}
+
+/**
+ * クエリパラメーターを更新したURLを生成する
+ * @param {string} url ベースとなるURL
+ * @param {string} paramName 更新するパラメーター名
+ * @param {string|number} paramValue 設定する値
+ * @returns {string} 更新されたURL
+ */
+function updateQueryParam(url, paramName, paramValue) {
+  const urlObj = new URL(url);
+  const searchParams = new URLSearchParams(urlObj.search);
+  
+  searchParams.set(paramName, paramValue);
+  urlObj.search = searchParams.toString();
+  
+  return urlObj.toString();
+}
+
+/**
+ * ページ番号を含むクエリパラメーターを検出し、前後のページリンクを生成する
+ * @returns {Object} 前後のページリンク {prevLink, nextLink}
+ */
+function findPageLinks() {
+  const currentUrl = window.location.href;
+  const queryParams = parseQueryParams(currentUrl);
+  
+  // ページ番号を表すと思われるパラメーターを検索
+  const pageParams = ['page', 'p', 'pg', 'pagina', 'pageno', 'pagenum', 'page_no', 'page_num'];
+  
+  let pageParamName = null;
+  let currentPage = null;
+  
+  // 既知のページパラメーター名を探す
+  for (const param of pageParams) {
+    if (param in queryParams) {
+      pageParamName = param;
+      currentPage = parseInt(queryParams[param], 10);
+      break;
+    }
+  }
+  
+  // ページパラメーターが見つからない場合は既存のリンクを探す
+  if (pageParamName === null || isNaN(currentPage)) {
+    return {
+      prevLink: findPrevLink(),
+      nextLink: findNextLink()
+    };
+  }
+  
+  // 前のページと次のページのリンクを生成
+  let prevLink = null;
+  let nextLink = null;
+  
+  if (currentPage > 1) {
+    prevLink = updateQueryParam(currentUrl, pageParamName, currentPage - 1);
+  }
+  
+  // 次のページは常に生成（上限は不明なため）
+  nextLink = updateQueryParam(currentUrl, pageParamName, currentPage + 1);
+  
+  return { prevLink, nextLink };
 }
 
 /**
@@ -139,9 +220,6 @@ const observer = new MutationObserver((mutations) => {
   const currentUrl = window.location.href;
   if (currentUrl !== lastUrl) {
     lastUrl = currentUrl;
-    
-    // 既存のボタンを削除
-    document.querySelectorAll('.page-navigator-button').forEach(btn => btn.remove());
     
     // 新しいページでボタンを再初期化
     setTimeout(initPageNavigator, 500);

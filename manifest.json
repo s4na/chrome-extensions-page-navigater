@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Page Navigator",
-  "version": "1.0",
+  "version": "1.0.1",
   "description": "ページ内の前へ/次へリンクを検出し、画面の左右に固定ナビゲーションボタンを表示します",
   "permissions": ["activeTab"],
   "content_scripts": [
