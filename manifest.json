@@ -3,11 +3,6 @@
   "name": "Page Navigator",
   "version": "1.0",
   "description": "ページ内の前へ/次へリンクを検出し、画面の左右に固定ナビゲーションボタンを表示します",
-  "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  },
   "permissions": ["activeTab"],
   "content_scripts": [
     {
