@@ -1,0 +1,57 @@
+.page-navigator-button {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10000;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 15px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, opacity 0.3s;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+}
+
+.page-navigator-button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  opacity: 1;
+}
+
+.page-navigator-prev {
+  left: 0;
+  border-radius: 0 4px 4px 0;
+}
+
+.page-navigator-next {
+  right: 0;
+  border-radius: 4px 0 0 4px;
+}
+
+.page-navigator-icon {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+.page-navigator-hidden {
+  display: none;
+}
+
+/* ボタンが画面上で邪魔にならないように調整 */
+@media (max-width: 768px) {
+  .page-navigator-button {
+    padding: 10px 5px;
+    font-size: 12px;
+  }
+  
+  .page-navigator-icon {
+    width: 15px;
+    height: 15px;
+  }
+}
